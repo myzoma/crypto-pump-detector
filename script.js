@@ -2192,12 +2192,13 @@ document.addEventListener('DOMContentLoaded', function() {
     updateWatchlistCounter();
 });
 // إكمال دالة getMarketRegimeInfo
-        'sideways_stable': { class: 'neutral', icon: '↔️', text: 'سوق جانبي مستقر' },
-        'volatile_sideways': { class: 'neutral volatile', icon: '↔️⚡', text: 'سوق جانبي متقلب' },
-        'neutral': { class: 'neutral', icon: '⚪', text: 'سوق محايد' }
-    };
-    return regimes[regime] || regimes['neutral'];
+       'sideways_stable': { class: 'neutral', icon: '↔️', text: 'سوق جانبي مستقر' },
+'volatile_sideways': { class: 'neutral volatile', icon: '↔️⚡', text: 'سوق جانبي متقلب' },
+'neutral': { class: 'neutral', icon: '⚪', text: 'سوق محايد' }
+};
+return regimes[regime] || regimes['neutral'];
 }
+
 
 // إضافة الدوال المفقودة
 function updateWatchlistCounter() {
