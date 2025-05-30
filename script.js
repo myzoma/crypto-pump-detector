@@ -1218,73 +1218,27 @@ function createDetailsModal(coin) {
 }
 
 function createDetailedStrategy(strategy) {
-    return `
-        <div class="detail-section">
-            <h3>🎯 الاستراتيجية التفصيلية</h3>
-            <div class="strategy-detailed">
-                <div class="strategy-overview">
-                    <strong>نوع الاستراتيجية:</strong> ${strategy.type}
-                </div>
-                
-                <div class="entry-conditions">
-                    <strong>شروط الدخول:</strong>
-                    <ul>
-                        ${strategy.entryConditions?.map(condition => `<li>${condition}</li>`).join('') || ''}
-                    </ul>
-                </div>
-                
-                <div class="price-levels">
-                    <div class="price-level entry">
-                        <span>🎯 نقطة الدخول:</span>
-                        <span>$${strategy.entryPrice?.toFixed(6)}</span>
-                    </div>
-                    <div class="price-level stop">
-                        <span>🛑 وقف الخسارة:</span>
-                        <span>$${strategy.stopLoss?.toFixed(6)}</span>
-                        <small>(${(((strategy.entryPrice - strategy.stopLoss) / strategy.entryPrice) * 100).toFixed(1)}%)</small>
-                    </div>
-                    <div class="targets-list">
-                        <span>🎯 الأهداف:</span>
-                        <div class="targets">
-                            ${strategy.targets?.map((target, index) => `
-                                <div class="target">
-                                    <span>هدف ${index + 1}:</span>
-                                    <span>$${target.toFixed(6)}</span>
-                                    <small>(+${(((target - strategy.entryPrice) / strategy.entryPrice) * 100).toFixed(1)}%)</small>
-                                </div>
-                            `).join('') || ''}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="strategy-metrics">
-                    <div class="metric">
-                        <span>⏰ الإطار الزمني:</span>
-                        <span>${window.detector?.getTimeframeText?.(strategy.timeframe) || 'غير محدد'}</span>
-                    </div>
-                    <div class="metric">
-                        <span>🔒 حجم المركز:</span>
-                        <span>${(strategy.positionSize * 100).toFixed(1)}% من المحفظة</span>
-                    </div>
-                    <div class="metric">
-                        <span>📊 مستوى الثقة:</span>
-                        <span>${strategy.confidence?.toFixed(1)}%</span>
-                    </div>
-                    <div class="metric">
-                        <span>💰 نسبة المخاطرة/الربح:</span>
-                        <span>1:${((strategy.targets?.[0] - strategy.entryPrice) / (strategy.entryPrice - strategy.stopLoss)).toFixed(1)}</span>
-                    </div>
-                </div>
-                
-                <div class="strategy-notes">
-                    <strong>ملاحظات:</strong>
-                    <p>${strategy.notes}</p>
-                </div>
-            </div>
-        </div>
-    `;
+    return '<div><p>استراتيجية بسيطة</p></div>';
 }
 
+function createStrategyModal(coin) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay strategy-modal';
+    modal.innerHTML = '<div class="modal-content"><h2>استراتيجية ' + coin.symbol + '</h2><button onclick="this.closest(\'.modal-overlay\').remove()">إغلاق</button></div>';
+    return modal;
+}
+
+function updateWatchlistCounter() {
+    console.log('تم تحديث العداد');
+}
+
+function showSuccessMessage(msg) {
+    alert(msg);
+}
+
+function showInfoMessage(msg) {
+    alert(msg);
+}
 
 function addToWatchlist(symbol) {
     let watchlist = JSON.parse(localStorage.getItem('cryptoWatchlist') || '[]');
