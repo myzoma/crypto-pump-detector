@@ -2195,8 +2195,10 @@ document.addEventListener('DOMContentLoaded', function() {
 'volatile_sideways': { class: 'neutral volatile', icon: '↔️⚡', text: 'سوق جانبي متقلب' },
 'neutral': { class: 'neutral', icon: '⚪', text: 'سوق محايد' }
 };
+
 return regimes[regime] || regimes['neutral'];
 }
+
 
 
 // إضافة الدوال المفقودة
