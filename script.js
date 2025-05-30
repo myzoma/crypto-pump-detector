@@ -1328,13 +1328,13 @@ function createStrategyModal(coin) {
                 ${createDetailedStrategy(coin.strategy)}
                 
                 <div class="strategy-actions">
-                    <button class="btn-copy" onclick="copyStrategyToClipboard('${coin.symbol}')">
+                    <button class="btn-copy" onclick="copyStrategyToClipboard('${coin.symbol.replace(/'/g, "\\'")}')">
                         📋 نسخ الاستراتيجية
                     </button>
-                    <button class="btn-alert" onclick="setStrategyAlert('${coin.symbol}')">
+                    <button class="btn-alert" onclick="setStrategyAlert('${coin.symbol.replace(/'/g, "\\'")}')">
                         🔔 تنبيه عند الوصول لنقطة الدخول
                     </button>
-                    <button class="btn-export" onclick="exportStrategy('${coin.symbol}')">
+                    <button class="btn-export" onclick="exportStrategy('${coin.symbol.replace(/'/g, "\\'")}')">
                         📤 تصدير الاستراتيجية
                     </button>
                 </div>
@@ -1344,6 +1344,7 @@ function createStrategyModal(coin) {
     
     return modal;
 }
+
 
 function copyStrategyToClipboard(symbol) {
     const coin = window.detector.coins.find(c => c.symbol === symbol);
