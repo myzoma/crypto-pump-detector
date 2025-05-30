@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كاشف البامب - العملات الرقمية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-chart-line"></i> كاشف البامب للعملات الرقمية</h1>
+                <div class="header-actions">
+                    <div class="market-status">
+                        <span id="marketStatus" class="market-indicator">تحليل السوق...</span>
+                    </div>
+                    <div class="header-buttons">
+                        <button class="header-btn" onclick="showWatchlist()">
+                            <i class="fas fa-bookmark"></i>
+                            قائمة المراقبة
+                            <span class="watchlist-counter" style="display: none;">0</span>
+                        </button>
+                        <button class="header-btn" onclick="showAlertsManager()">
+                            <i class="fas fa-bell"></i>
+                            التنبيهات
+                        </button>
+                        <button class="header-btn" onclick="showStatistics()">
+                            <i class="fas fa-chart-bar"></i>
+                            الإحصائيات
+                        </button>
+                        <button class="header-btn" onclick="exportAllData()">
+                            <i class="fas fa-download"></i>
+                            تصدير البيانات
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="filters-section">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-score="all">جميع العملات</button>
+                <button class="filter-btn" data-score="100">100 نقطة</button>
+                <button class="filter-btn" data-score="90">90+ نقطة</button>
+                <button class="filter-btn" data-score="80">80+ نقطة</button>
+                <button class="filter-btn" data-score="70">70+ نقطة</button>
+                <button class="filter-btn" data-score="60">60+ نقطة</button>
+            </div>
+            
+            <div class="controls-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="البحث عن عملة..." />
+                    <i class="fas fa-search"></i>
+                </div>
+                
+                <div class="sort-controls">
+                    <select id="sortSelect">
+                        <option value="score">ترتيب حسب النقاط</option>
+                        <option value="change">ترتيب حسب التغيير</option>
+                        <option value="volume">ترتيب حسب الحجم</option>
+                        <option value="price">ترتيب حسب السعر</option>
+                    </select>
+                </div>
+                
+                <div class="refresh-section">
+                    <button id="refreshBtn" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> تحديث البيانات
+                    </button>
+                    <span id="lastUpdate" class="last-update">آخر تحديث: --</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- شريط المعلومات السريعة -->
+        <div class="quick-info-bar">
+            <div class="info-item">
+                <span class="info-label">إجمالي العملات:</span>
+                <span id="totalCoins" class="info-value">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">عملات صاعدة:</span>
+                <span id="bullishCoins" class="info-value positive">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">عملات هابطة:</span>
+                <span id="bearishCoins" class="info-value negative">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">متوسط النقاط:</span>
+                <span id="averageScore" class="info-value">0</span>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>جاري تحليل العملات...</p>
+        </div>
+
+        <div class="coins-grid" id="coinsGrid">
+            <!-- البطاقات ستظهر هنا -->
+        </div>
+
+        <!-- رسالة عدم وجود نتائج -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <i class="fas fa-search"></i>
+            <h3>لا توجد نتائج</h3>
+            <p>لم يتم العثور على عملات تطابق معايير البحث</p>
+        </div>
+    </div>
+
+    <!-- النافذة المنبثقة للتفاصيل -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="close-btn" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="modalContent">
+                <!-- محتوى التحليل التفصيلي -->
+            </div>
+        </div>
+    </div>
+
+    <!-- منطقة الإشعارات -->
+    <div id="notificationsContainer" class="notifications-container"></div>
+
+    <!-- شريط التحكم السفلي -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <span>تم تحليل <span id="analyzedCount">0</span> عملة</span>
+                <span>آخر تحديث: <span id="footerLastUpdate">--</span></span>
+            </div>
+            <div class="footer-actions">
+                <button class="footer-btn" onclick="scrollToTop()">
+                    <i class="fas fa-arrow-up"></i>
+                    العودة للأعلى
+                </button>
+                <button class="footer-btn" onclick="toggleAutoRefresh()">
+                    <i class="fas fa-clock"></i>
+                    <span id="autoRefreshText">تفعيل التحديث التلقائي</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- أزرار عائمة -->
+    <div class="floating-buttons">
+        <button class="floating-btn primary" onclick="showWatchlist()" title="قائمة المراقبة">
+            <i class="fas fa-bookmark"></i>
+            <span class="floating-counter watchlist-counter">0</span>
+        </button>
+        <button class="floating-btn secondary" onclick="showAlertsManager()" title="التنبيهات">
+            <i class="fas fa-bell"></i>
+        </button>
+        <button class="floating-btn tertiary" onclick="exportAllData()" title="تصدير البيانات">
+            <i class="fas fa-download"></i>
+        </button>
+    </div>
+
+    <!-- مؤشر التقدم -->
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- نافذة تأكيد -->
+    <div class="confirmation-modal" id="confirmationModal" style="display: none;">
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3 id="confirmationTitle">تأكيد العملية</h3>
+            <p id="confirmationMessage">هل أنت متأكد من هذه العملية؟</p>
+            <div class="confirmation-buttons">
+                <button class="btn-confirm" id="confirmBtn">تأكيد</button>
+                <button class="btn-cancel" id="cancelBtn">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // تهيئة التطبيق
+        document.addEventListener('DOMContentLoaded', function() {
+            updateWatchlistCounter();
+            initializeEventListeners();
+            
+            // تحديث العدادات كل ثانية
+            setInterval(updateQuickInfo, 1000);
+        });
+
+        // إضافة مستمعي الأحداث
+        function initializeEventListeners() {
+            // البحث
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            
+            // الترتيب
+            document.getElementById('sortSelect').addEventListener('change', handleSort);
+            
+            // التأكيد
+            document.getElementById('confirmBtn').addEventListener('click', handleConfirmation);
+            document.getElementById('cancelBtn').addEventListener('click', hideConfirmation);
+        }
+
+        // دالة البحث
+        function handleSearch(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            const coinCards = document.querySelectorAll('.coin-card');
+            let visibleCount = 0;
+
+            coinCards.forEach(card => {
+                const symbol = card.querySelector('.coin-symbol').textContent.toLowerCase();
+                const isVisible = symbol.includes(searchTerm);
+                card.style.display = isVisible ? 'block' : 'none';
+                if (isVisible) visibleCount++;
+            });
+
+            // إظهار رسالة عدم وجود نتائج
+            const noResults = document.getElementById('noResults');
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        // دالة الترتيب
+        function handleSort(event) {
+            const sortBy = event.target.value;
+            const coinsGrid = document.getElementById('coinsGrid');
+            const coinCards = Array.from(coinsGrid.children);
+
+            coinCards.sort((a, b) => {
+                switch(sortBy) {
+                    case 'score':
+                        const scoreA = parseFloat(a.dataset.score) || 0;
+                        const scoreB = parseFloat(b.dataset.score) || 0;
+                        return scoreB - scoreA;
+                    case 'change':
+                        const changeA = parseFloat(a.dataset.change) || 0;
+                        const changeB = parseFloat(b.dataset.change) || 0;
+                        return changeB - changeA;
+                    case 'volume':
+                        const volumeA = parseFloat(a.dataset.volume) || 0;
+                        const volumeB = parseFloat(b.dataset.volume) || 0;
+                        return volumeB - volumeA;
+                    case 'price':
+                        const priceA = parseFloat(a.dataset.price) || 0;
+                        const priceB = parseFloat(b.dataset.price) || 0;
+                        return priceB - priceA;
+                    default:
+                        return 0;
+                }
+            });
+
+            // إعادة ترتيب العناصر
+            coinCards.forEach(card => coinsGrid.appendChild(card));
+        }
+
+        // تحديث المعلومات السريعة
+        function updateQuickInfo() {
+            if (!window.detector || !window.detector.coins) return;
+
+            const coins = window.detector.coins;
+            const totalCoins = coins.length;
+            const bullishCoins = coins.filter(coin => parseFloat(coin.analysis.priceChange24h) > 0).length;
+            const bearishCoins = coins.filter(coin => parseFloat(coin.analysis.priceChange24h) < 0).length;
+            const averageScore = coins.reduce((sum, coin) => sum + (coin.adaptedScore || 0), 0) / totalCoins;
+
+            document.getElementById('totalCoins').textContent = totalCoins;
+            document.getElementById('bullishCoins').textContent = bullishCoins;
+            document.getElementById('bearishCoins').textContent = bearishCoins;
+            document.getElementById('averageScore').textContent = averageScore.toFixed(1);
+        }
+
+        // دوال مساعدة
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleAutoRefresh() {
+            // سيتم تنفيذها في ملف JavaScript الرئيسي
+            console.log('Toggle auto refresh');
+        }
+
+        function handleConfirmation() {
+            // سيتم تنفيذها حسب السياق
+            hideConfirmation();
+        }
+
+        function hideConfirmation() {
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
