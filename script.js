@@ -1229,8 +1229,7 @@ function createDetailedStrategy(strategy) {
                 <div class="entry-conditions">
                     <strong>شروط الدخول:</strong>
                     <ul>
-                        ${strategy.entryConditions.map(condition => `<li>${condition}
-                        ${strategy.entryConditions.map(condition => `<li>${condition}</li>`).join('')}
+                        ${strategy.entryConditions?.map(condition => `<li>${condition}</li>`).join('') || ''}
                     </ul>
                 </div>
                 
@@ -1261,7 +1260,7 @@ function createDetailedStrategy(strategy) {
                 <div class="strategy-metrics">
                     <div class="metric">
                         <span>⏰ الإطار الزمني:</span>
-                        <span>${window.detector.getTimeframeText(strategy.timeframe)}</span>
+                        <span>${window.detector?.getTimeframeText?.(strategy.timeframe) || 'غير محدد'}</span>
                     </div>
                     <div class="metric">
                         <span>🔒 حجم المركز:</span>
@@ -1283,11 +1282,9 @@ function createDetailedStrategy(strategy) {
                 </div>
             </div>
         </div>
-    `    `;
-    return modal;
+    `;
 }
 
-}
 
 function addToWatchlist(symbol) {
     let watchlist = JSON.parse(localStorage.getItem('cryptoWatchlist') || '[]');
