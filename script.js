@@ -1283,7 +1283,10 @@ function createDetailedStrategy(strategy) {
                 </div>
             </div>
         </div>
-    `
+    `    `;
+    return modal;
+}
+
 }
 
 function addToWatchlist(symbol) {
