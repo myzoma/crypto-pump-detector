@@ -1871,22 +1871,21 @@ function createStatisticsModal() {
                 </div>
                 
                 <div class="top-performers">
-                    <h3>🏆 أفضل العملات أداءً</h3>
-                    <div class="performers-list">
-                        ${stats.topPerformers.map((coin, index) => `
-                            <div class="performer-item">
-                                <span class="rank">#${index + 1}</span>
-                                <span class="symbol">${coin.symbol}</span>
-                                <span class="score">${coin.adaptedScore.toFixed(1)}</span>
-                                <span class="change ${parseFloat(coin.analysis.priceChange24h) >= 0 ? 'positive' : 'negative'}">
-                                    ${coin.analysis.
+    <h3>🏆 أفضل العملات أداءً</h3>
+    <div class="performers-list">
+        ${stats.topPerformers.map((coin, index) => `
+            <div class="performer-item">
+                <span class="rank">#${index + 1}</span>
+                <span class="symbol">${coin.symbol}</span>
+                <span class="score">${coin.adaptedScore.toFixed(1)}</span>
+                <span class="change ${parseFloat(coin.analysis.priceChange24h) >= 0 ? 'positive' : 'negative'}">
+                    ${coin.analysis.priceChange24h}%
+                </span>
+            </div>
+        `).join('')}
+    </div>
+</div>
 
-                                    ${coin.analysis.priceChange24h}%
-                                </span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
                 
                 <div class="market-overview">
                     <h3>🌍 نظرة عامة على السوق</h3>
