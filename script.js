@@ -2236,3 +2236,36 @@ function createQuickAlert(symbol, currentPrice) {
 document.addEventListener('DOMContentLoaded', function() {
     updateWatchlistCounter();
 });
+// أضف هذا في آخر ملف script.js
+
+function updateWatchlistCounter() {
+    const watchlist = JSON.parse(localStorage.getItem('cryptoWatchlist') || '[]');
+    const counter = document.querySelector('.watchlist-counter');
+    if (counter) counter.textContent = watchlist.length;
+}
+
+function showSuccessMessage(message) {
+    alert(message); // حل سريع
+}
+
+function showInfoMessage(message) {
+    alert(message); // حل سريع
+}
+
+// إصلاح دالة createStrategyModal - أضف الأقواس المفقودة
+function createStrategyModal(coin) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay strategy-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 استراتيجية ${coin.symbol}</h2>
+                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>${coin.strategy || 'لا توجد استراتيجية'}</p>
+            </div>
+        </div>
+    `;
+    return modal;
+}
