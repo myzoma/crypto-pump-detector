@@ -1321,3 +1321,92 @@ function exportAllData() { alert('💾 تصدير البيانات'); }
 function copyStrategyToClipboard(symbol) { alert('📋 نسخ استراتيجية: ' + symbol); }
 function setStrategyAlert(symbol) { alert('🔔 تنبيه للعملة: ' + symbol); }
 function exportStrategy(symbol) { alert('💾 تصدير استراتيجية: ' + symbol); }
+
+
+// إغلاق جميع الأقواس المفقودة
+        }
+    }
+}
+
+// إنهاء الكلاس
+}
+
+// تشغيل الكاشف
+document.addEventListener('DOMContentLoaded', function() {
+    window.detector = new EnhancedCryptoPumpDetector();
+    updateWatchlistCounter();
+});
+
+// جميع الدوال المطلوبة
+function addToWatchlist(symbol) {
+    try {
+        let watchlist = JSON.parse(localStorage.getItem('cryptoWatchlist') || '[]');
+        if (!watchlist.includes(symbol)) {
+            watchlist.push(symbol);
+            localStorage.setItem('cryptoWatchlist', JSON.stringify(watchlist));
+            alert('✅ تم إضافة ' + symbol + ' إلى قائمة المراقبة');
+            updateWatchlistCounter();
+        } else {
+            alert('ℹ️ ' + symbol + ' موجود بالفعل');
+        }
+    } catch(e) {
+        alert('❌ خطأ في إضافة العملة');
+    }
+}
+
+function showStrategy(symbol) {
+    alert('📊 استراتيجية ' + symbol);
+}
+
+function updateWatchlistCounter() {
+    try {
+        const watchlist = JSON.parse(localStorage.getItem('cryptoWatchlist') || '[]');
+        const counter = document.querySelector('.watchlist-counter');
+        if (counter) {
+            counter.textContent = watchlist.length;
+        }
+    } catch(e) {
+        console.log('تحديث العداد...');
+    }
+}
+
+function showWatchlist() {
+    const watchlist = JSON.parse(localStorage.getItem('cryptoWatchlist') || '[]');
+    alert('📋 قائمة المراقبة: ' + (watchlist.length > 0 ? watchlist.join(', ') : 'فارغة'));
+}
+
+function showAlertsManager() {
+    alert('🔔 إدارة التنبيهات قيد التطوير');
+}
+
+function showStatistics() {
+    alert('📈 الإحصائيات قيد التطوير');
+}
+
+function exportAllData() {
+    alert('💾 تصدير البيانات قيد التطوير');
+}
+
+function copyStrategyToClipboard(symbol) {
+    navigator.clipboard.writeText('استراتيجية ' + symbol).then(() => {
+        alert('📋 تم نسخ استراتيجية ' + symbol);
+    }).catch(() => {
+        alert('📋 استراتيجية ' + symbol);
+    });
+}
+
+function setStrategyAlert(symbol) {
+    alert('🔔 تم تعيين تنبيه للعملة: ' + symbol);
+}
+
+function exportStrategy(symbol) {
+    alert('💾 تصدير استراتيجية: ' + symbol);
+}
+
+// تأكد من تحميل العداد عند تحميل الصفحة
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateWatchlistCounter);
+} else {
+    updateWatchlistCounter();
+}
+
