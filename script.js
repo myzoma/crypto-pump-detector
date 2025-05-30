@@ -2191,36 +2191,108 @@ function createQuickAlert(symbol, currentPrice) {
 document.addEventListener('DOMContentLoaded', function() {
     updateWatchlistCounter();
 });
-// أضف هذا في آخر ملف script.js
+// إكمال دالة getMarketRegimeInfo
+        'sideways_stable': { class: 'neutral', icon: '↔️', text: 'سوق جانبي مستقر' },
+        'volatile_sideways': { class: 'neutral volatile', icon: '↔️⚡', text: 'سوق جانبي متقلب' },
+        'neutral': { class: 'neutral', icon: '⚪', text: 'سوق محايد' }
+    };
+    return regimes[regime] || regimes['neutral'];
+}
 
+// إضافة الدوال المفقودة
 function updateWatchlistCounter() {
-    const watchlist = JSON.parse(localStorage.getItem('cryptoWatchlist') || '[]');
-    const counter = document.querySelector('.watchlist-counter');
-    if (counter) counter.textContent = watchlist.length;
+    try {
+        const watchlist = JSON.parse(localStorage.getItem('cryptoWatchlist') || '[]');
+        const counter = document.querySelector('.watchlist-counter');
+        if (counter) counter.textContent = watchlist.length;
+    } catch (error) {
+        console.error('خطأ في تحديث العداد:', error);
+    }
 }
 
-function showSuccessMessage(message) {
-    alert(message); // حل سريع
+function showSuccessMessage(msg) {
+    alert('✅ ' + msg);
 }
 
-function showInfoMessage(message) {
-    alert(message); // حل سريع
+function showInfoMessage(msg) {
+    alert('ℹ️ ' + msg);
 }
 
-// إصلاح دالة createStrategyModal - أضف الأقواس المفقودة
-function createStrategyModal(coin) {
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay strategy-modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📋 استراتيجية ${coin.symbol}</h2>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
-            </div>
-            <div class="modal-body">
-                <p>${coin.strategy || 'لا توجد استراتيجية'}</p>
+function showWatchlist() {
+    alert('قائمة المراقبة قيد التطوير');
+}
+
+function showAlertsManager() {
+    alert('إدارة التنبيهات قيد التطوير');
+}
+
+function showStatistics() {
+    alert('الإحصائيات قيد التطوير');
+}
+
+function exportAllData() {
+    alert('تصدير البيانات قيد التطوير');
+}
+
+function copyStrategyToClipboard(symbol) {
+    alert('نسخ الاستراتيجية: ' + symbol);
+}
+
+function setStrategyAlert(symbol) {
+    alert('تنبيه للعملة: ' + symbol);
+}
+
+function exportStrategy(symbol) {
+    alert('تصدير استراتيجية: ' + symbol);
+}
+
+// إصلاح دالة createDetailedStrategy
+function createDetailedStrategy(strategy) {
+    if (!strategy) return '<div><p>لا توجد استراتيجية متاحة</p></div>';
+    
+    return `
+        <div class="detail-section">
+            <h3>🎯 الاستراتيجية التفصيلية</h3>
+            <div class="strategy-detailed">
+                <div class="strategy-overview">
+                    <strong>نوع الاستراتيجية:</strong> ${strategy.type || 'غير محدد'}
+                </div>
+                
+                <div class="entry-conditions">
+                    <strong>شروط الدخول:</strong>
+                    <ul>
+                        ${strategy.entryConditions ? strategy.entryConditions.map(condition => `<li>${condition}</li>`).join('') : '<li>غير محدد</li>'}
+                    </ul>
+                </div>
+                
+                <div class="price-levels">
+                    <div class="price-level entry">
+                        <span>🎯 نقطة الدخول:</span>
+                        <span>$${strategy.entryPrice ? strategy.entryPrice.toFixed(6) : '0.000000'}</span>
+                    </div>
+                    <div class="price-level stop">
+                        <span>🛑 وقف الخسارة:</span>
+                        <span>$${strategy.stopLoss ? strategy.stopLoss.toFixed(6) : '0.000000'}</span>
+                    </div>
+                </div>
+                
+                <div class="strategy-notes">
+                    <strong>ملاحظات:</strong>
+                    <p>${strategy.notes || 'لا توجد ملاحظات'}</p>
+                </div>
             </div>
         </div>
     `;
-    return modal;
+}
+
+// إضافة دالة getTimeframeText إذا لم تكن موجودة
+if (window.detector && !window.detector.getTimeframeText) {
+    window.detector.getTimeframeText = function(timeframe) {
+        const timeframes = {
+            'short_term': 'قصير المدى',
+            'medium_term': 'متوسط المدى', 
+            'long_term': 'طويل المدى'
+        };
+        return timeframes[timeframe] || 'غير محدد';
+    };
 }
