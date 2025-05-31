@@ -1,3 +1,27 @@
+
+
+class CryptoPumpDetector {
+    constructor() {
+        this.coins = [];
+        this.filteredCoins = [];
+        this.currentFilter = 'all';
+        this.isLoading = false;
+        this.marketRegime = 'neutral';
+        this.marketVolatility = 'normal';
+        
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+        this.loadData();
+        
+        setInterval(() => {
+            if (!this.isLoading) {
+                this.loadData();
+            }
+        }, 300000);
+    }
 // إضافة هذا الكود في بداية ملف script.js لمعالجة الأخطاء
 
 // دالة مساعدة للتحقق من وجود العنصر وإضافة مستمع الحدث
@@ -234,30 +258,6 @@ function checkBrowserSupport() {
 if (!checkBrowserSupport()) {
     console.error('المتصفح غير مدعوم');
 }
-
-class CryptoPumpDetector {
-    constructor() {
-        this.coins = [];
-        this.filteredCoins = [];
-        this.currentFilter = 'all';
-        this.isLoading = false;
-        this.marketRegime = 'neutral';
-        this.marketVolatility = 'normal';
-        
-        this.init();
-    }
-
-    init() {
-        this.bindEvents();
-        this.loadData();
-        
-        setInterval(() => {
-            if (!this.isLoading) {
-                this.loadData();
-            }
-        }, 300000);
-    }
-
     bindEvents() {
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
