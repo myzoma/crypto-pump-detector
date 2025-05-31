@@ -1300,4 +1300,255 @@ function showNotification(title, body, icon = '/favicon.ico') {
 
 // تصدير الكلاس للاستخدام العام
 window.CryptoPumpDetector = CryptoPumpDetector;
+// إضافة الدوال المفقودة في بداية الملف
+
+// دالة عرض قائمة المراقبة
+const showWatchlist = () => {
+    try {
+        console.log('عرض قائمة المراقبة');
+        const watchlistContainer = document.getElementById('watchlist-container');
+        const mainContainer = document.getElementById('main-container');
+        
+        if (watchlistContainer && mainContainer) {
+            watchlistContainer.style.display = 'block';
+            mainContainer.style.display = 'none';
+            updateWatchlistDisplay();
+        } else {
+            console.error('عناصر قائمة المراقبة غير موجودة');
+        }
+    } catch (error) {
+        console.error('خطأ في عرض قائمة المراقبة:', error);
+    }
+};
+
+// دالة إخفاء قائمة المراقبة
+const hideWatchlist = () => {
+    try {
+        const watchlistContainer = document.getElementById('watchlist-container');
+        const mainContainer = document.getElementById('main-container');
+        
+        if (watchlistContainer && mainContainer) {
+            watchlistContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('خطأ في إخفاء قائمة المراقبة:', error);
+    }
+};
+
+// دالة تحديث عرض قائمة المراقبة
+const updateWatchlistDisplay = () => {
+    try {
+        const watchlist = JSON.parse(localStorage.getItem('cryptoWatchlist') || '[]');
+        const container = document.getElementById('watchlist-items');
+        
+        if (!container) {
+            console.error('حاوية قائمة المراقبة غير موجودة');
+            return;
+        }
+        
+        if (watchlist.length === 0) {
+            container.innerHTML = '<div class="empty-watchlist"><p>قائمة المراقبة فارغة</p></div>';
+            return;
+        }
+        
+        container.innerHTML = watchlist.map(coin => `
+            <div class="watchlist-item" data-coin-id="${coin.id}">
+                <div class="coin-info">
+                    <img src="${coin.image || ''}" alt="${coin.name}" class="coin-icon">
+                    <div class="coin-details">
+                        <h4>${coin.name}</h4>
+                        <span class="coin-symbol">${coin.symbol?.toUpperCase()}</span>
+                    </div>
+                </div>
+                <div class="coin-price">
+                    <span class="price">$${coin.current_price || 'N/A'}</span>
+                    <span class="change ${(coin.price_change_percentage_24h || 0) >= 0 ? 'positive' : 'negative'}">
+                        ${(coin.price_change_percentage_24h || 0).toFixed(2)}%
+                    </span>
+                </div>
+                <button class="remove-btn" onclick="removeFromWatchlist('${coin.id}')">
+                    حذف
+                </button>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('خطأ في تحديث قائمة المراقبة:', error);
+    }
+};
+
+// دالة حذف عملة من قائمة المراقبة
+const removeFromWatchlist = (coinId) => {
+    try {
+        let watchlist = JSON.parse(localStorage.getItem('cryptoWatchlist') || '[]');
+        watchlist = watchlist.filter(coin => coin.id !== coinId);
+        localStorage.setItem('cryptoWatchlist', JSON.stringify(watchlist));
+        updateWatchlistDisplay();
+        showNotification('تم حذف العملة من قائمة المراقبة', 'success');
+    } catch (error) {
+        console.error('خطأ في حذف العملة:', error);
+        showNotification('فشل في حذف العملة', 'error');
+    }
+};
+
+// دالة عرض الإشعارات
+const showNotification = (message, type = 'info') => {
+    try {
+        const container = document.getElementById('notificationsContainer');
+        if (!container) return;
+        
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        container.appendChild(notification);
+        
+        // إزالة الإشعار بعد 3 ثوان
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 3000);
+    } catch (error) {
+        console.error('خطأ في عرض الإشعار:', error);
+    }
+};
+
+// دالة فحص صحة التطبيق
+const validateApp = () => {
+    const requiredElements = [
+        'coinsGrid',
+        'loading', 
+        'searchInput',
+        'notificationsContainer',
+        'main-container',
+        'watchlist-container'
+    ];
+    
+    const missingElements = requiredElements.filter(id => !document.getElementById(id));
+    
+    if (missingElements.length > 0) {
+        console.error('عناصر مفقودة:', missingElements);
+        return false;
+    }
+    
+    console.log('جميع العناصر المطلوبة موجودة');
+    return true;
+};
+
+// دالة تهيئة المستمعات المحسنة
+const initializeAllEventListeners = () => {
+    try {
+        // التأكد من وجود العناصر أولاً
+        if (!validateApp()) {
+            throw new Error('فشل في فحص صحة التطبيق');
+        }
+        
+        // إضافة مستمعات الأزرار الرئيسية
+        const watchlistBtn = document.getElementById('watchlist-btn');
+        if (watchlistBtn) {
+            watchlistBtn.addEventListener('click', showWatchlist);
+        }
+        
+        const backBtn = document.getElementById('back-btn');
+        if (backBtn) {
+            backBtn.addEventListener('click', hideWatchlist);
+        }
+        
+        const refreshBtn = document.getElementById('refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                refreshData();
+            });
+        }
+        
+        // مستمع البحث
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                filterCoins(e.target.value);
+            });
+        }
+        
+        // مستمعات الفلاتر
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // إزالة الفئة النشطة من جميع الأزرار
+                filterButtons.forEach(b => b.classList.remove('active'));
+                // إضافة الفئة النشطة للزر المضغوط
+                e.target.classList.add('active');
+                
+                const filter = e.target.dataset.filter;
+                applyScoreFilter(filter);
+            });
+        });
+        
+        // مستمع الترتيب
+        const sortSelect = document.getElementById('sort-select');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', (e) => {
+                applySorting(e.target.value);
+            });
+        }
+        
+        console.log('تم تهيئة جميع المستمعات بنجاح');
+        
+    } catch (error) {
+        console.error('خطأ في تهيئة المستمعات:', error);
+        handleError(error, 'تهيئة المستمعات');
+    }
+};
+
+// دالة تهيئة التطبيق
+const initializeApp = async () => {
+    try {
+        console.log('بدء تهيئة التطبيق...');
+        
+        // إخفاء التحميل في البداية
+        const loading = document.getElementById('loading');
+        if (loading) {
+            loading.style.display = 'none';
+        }
+        
+        // تحميل البيانات
+        await loadCryptoData();
+        
+        console.log('تم تهيئة التطبيق بنجاح');
+        
+    } catch (error) {
+        console.error('خطأ في تهيئة التطبيق:', error);
+        handleError(error, 'تهيئة التطبيق');
+    }
+};
+
+// التأكد من تحميل DOM قبل التهيئة
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM محمل، بدء التهيئة...');
+    
+    try {
+        initializeAllEventListeners();
+        initializeApp();
+    } catch (error) {
+        console.error('خطأ في التهيئة الأولية:', error);
+        handleError(error, 'التهيئة الأولية');
+    }
+});
+
+// معالج الأخطاء المحسن
+const handleError = (error, context = 'عام') => {
+    console.error(`خطأ في التطبيق ${context}:`, error);
+    
+    const errorContainer = document.getElementById('error-message');
+    if (errorContainer) {
+        errorContainer.innerHTML = `
+            <div class="error-content">
+                <h4>حدث خطأ في ${context}</h4>
+                <p>${error.message}</p>
+                <button onclick="this.parentElement.parentElement.style.display='none'">إغلاق</button>
+            </div>
+        `;
+        errorContainer.style.display = 'block';
+    }
+};
 
