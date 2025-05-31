@@ -1,3 +1,240 @@
+// إضافة هذا الكود في بداية ملف script.js لمعالجة الأخطاء
+
+// دالة مساعدة للتحقق من وجود العنصر وإضافة مستمع الحدث
+function safeAddEventListener(elementId, event, handler) {
+    try {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.addEventListener(event, handler);
+            return true;
+        } else {
+            console.warn(`Element not found: ${elementId}`);
+            return false;
+        }
+    } catch (error) {
+        console.error(`Error adding event listener to ${elementId}:`, error);
+        return false;
+    }
+}
+
+// دالة مساعدة للتحقق من وجود العناصر بالكلاس
+function safeAddEventListenerByClass(className, event, handler) {
+    try {
+        const elements = document.querySelectorAll(className);
+        if (elements.length > 0) {
+            elements.forEach(element => {
+                element.addEventListener(event, handler);
+            });
+            return true;
+        } else {
+            console.warn(`No elements found with class: ${className}`);
+            return false;
+        }
+    } catch (error) {
+        console.error(`Error adding event listener to class ${className}:`, error);
+        return false;
+    }
+}
+
+// استبدال الكود في السطر 1212 وما حوله بهذا:
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        // التأكد من تحميل جميع العناصر قبل إضافة المستمعات
+        setTimeout(() => {
+            initializeAllEventListeners();
+        }, 100);
+    } catch (error) {
+        console.error('خطأ في تهيئة التطبيق:', error);
+    }
+});
+
+function initializeAllEventListeners() {
+    // قائمة جميع العناصر ومستمعي الأحداث
+    const eventListeners = [
+        // أزرار الهيدر
+        { id: 'watchlistBtn', event: 'click', handler: showWatchlist },
+        { id: 'alertsBtn', event: 'click', handler: showAlertsManager },
+        { id: 'statisticsBtn', event: 'click', handler: showStatistics },
+        { id: 'exportBtn', event: 'click', handler: exportAllData },
+        
+        // عناصر التحكم
+        { id: 'searchInput', event: 'input', handler: handleSearch },
+        { id: 'sortSelect', event: 'change', handler: handleSort },
+        { id: 'refreshBtn', event: 'click', handler: refreshData },
+        
+        // أزرار التذييل
+        { id: 'scrollTopBtn', event: 'click', handler: scrollToTop },
+        { id: 'autoRefreshBtn', event: 'click', handler: toggleAutoRefresh },
+        
+        // الأزرار العائمة
+        { id: 'floatingWatchlistBtn', event: 'click', handler: showWatchlist },
+        { id: 'floatingAlertsBtn', event: 'click', handler: showAlertsManager },
+        { id: 'floatingExportBtn', event: 'click', handler: exportAllData },
+        
+        // نوافذ التأكيد والإغلاق
+        { id: 'confirmBtn', event: 'click', handler: handleConfirmation },
+        { id: 'cancelBtn', event: 'click', handler: hideConfirmation },
+        { id: 'closeModal', event: 'click', handler: closeModalWindow },
+    ];
+
+    // إضافة مستمعي الأحداث مع التحقق من الوجود
+    eventListeners.forEach(({ id, event, handler }) => {
+        safeAddEventListener(id, event, handler);
+    });
+
+    // إضافة مستمعات للعناصر المتعددة
+    safeAddEventListenerByClass('.filter-btn', 'click', handleFilter);
+    safeAddEventListenerByClass('.coin-card', 'click', handleCoinCardClick);
+    
+    // إضافة مستمع لإغلاق النافذة المنبثقة عند النقر خارجها
+    const modalOverlay = document.getElementById('modalOverlay');
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                closeModalWindow();
+            }
+        });
+    }
+
+    console.log('تم تهيئة جميع مستمعي الأحداث بنجاح');
+}
+
+// دوال معالجة الأحداث مع حماية من الأخطاء
+function handleCoinCardClick(event) {
+    try {
+        const card = event.currentTarget;
+        const symbol = card.dataset.symbol;
+        if (symbol) {
+            showCoinDetails(symbol);
+        }
+    } catch (error) {
+        console.error('خطأ في النقر على بطاقة العملة:', error);
+    }
+}
+
+function showCoinDetails(symbol) {
+    try {
+        console.log(`عرض تفاصيل العملة: ${symbol}`);
+        // سيتم تنفيذها في الكود الرئيسي
+    } catch (error) {
+        console.error('خطأ في عرض تفاصيل العملة:', error);
+    }
+}
+
+// دالة محسنة لمعالجة الأخطاء
+function handleError(error, context = 'غير محدد') {
+    console.error(`خطأ في ${context}:`, error);
+    
+    // إظهار رسالة خطأ للمستخدم
+    if (typeof showNotification === 'function') {
+        showNotification(`حدث خطأ في ${context}`, 'error');
+    }
+    
+    // إرسال تقرير الخطأ (اختياري)
+    // sendErrorReport(error, context);
+}
+
+// دالة للتحقق من حالة التطبيق
+function checkAppHealth() {
+    const requiredElements = [
+        'coinsGrid',
+        'loading',
+        'searchInput',
+        'notificationsContainer'
+    ];
+
+    const missingElements = requiredElements.filter(id => !document.getElementById(id));
+    
+    if (missingElements.length > 0) {
+        console.warn('عناصر مفقودة:', missingElements);
+        return false;
+    }
+    
+    return true;
+}
+
+// تشغيل فحص صحة التطبيق
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        if (!checkAppHealth()) {
+            console.error('فشل في فحص صحة التطبيق');
+            if (typeof showNotification === 'function') {
+                showNotification('حدث خطأ في تحميل التطبيق', 'error');
+            }
+        }
+    }, 500);
+});
+
+// معالج الأخطاء العام المحسن
+window.addEventListener('error', function(event) {
+    handleError(event.error, 'التطبيق العام');
+    
+    // منع إظهار الخطأ في الكونسول إذا كان مكرراً
+    event.preventDefault();
+});
+
+window.addEventListener('unhandledrejection', function(event) {
+    handleError(event.reason, 'Promise غير معالج');
+    
+    // منع إظهار الخطأ في الكونسول
+    event.preventDefault();
+});
+
+// دالة تنظيف الذاكرة عند إغلاق الصفحة
+window.addEventListener('beforeunload', function() {
+    try {
+        // تنظيف المؤقتات
+        if (typeof autoRefreshInterval !== 'undefined' && autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+        }
+        
+        // حفظ البيانات المهمة
+        if (typeof saveAppState === 'function') {
+            saveAppState();
+        }
+    } catch (error) {
+        console.error('خطأ في تنظيف التطبيق:', error);
+    }
+});
+
+// دالة للتحقق من دعم المتصفح
+function checkBrowserSupport() {
+    const requiredFeatures = [
+        'localStorage',
+        'fetch',
+        'Promise',
+        'addEventListener'
+    ];
+
+    const unsupportedFeatures = requiredFeatures.filter(feature => {
+        switch(feature) {
+            case 'localStorage':
+                return typeof Storage === 'undefined';
+            case 'fetch':
+                return typeof fetch === 'undefined';
+            case 'Promise':
+                return typeof Promise === 'undefined';
+            case 'addEventListener':
+                return typeof document.addEventListener === 'undefined';
+            default:
+                return false;
+        }
+    });
+
+    if (unsupportedFeatures.length > 0) {
+        console.error('المتصفح لا يدعم:', unsupportedFeatures);
+        alert('متصفحك لا يدعم بعض الميزات المطلوبة. يرجى تحديث المتصفح.');
+        return false;
+    }
+
+    return true;
+}
+
+// فحص دعم المتصفح عند التحميل
+if (!checkBrowserSupport()) {
+    console.error('المتصفح غير مدعوم');
+}
+
 class CryptoPumpDetector {
     constructor() {
         this.coins = [];
