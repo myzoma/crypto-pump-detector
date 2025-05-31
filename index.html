@@ -4,190 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كاشف البامب - العملات الرقمية</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <!-- إضافة favicon لتجنب خطأ 404 -->
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <div class="header-content">
-                <h1><i class="fas fa-chart-line"></i> كاشف البامب للعملات الرقمية</h1>
-                <div class="header-actions">
-                    <div class="market-status">
-                        <span id="marketStatus" class="market-indicator">تحليل السوق...</span>
-                    </div>
-                    <div class="header-buttons">
-                        <button class="header-btn" id="watchlistBtn">
-                            <i class="fas fa-bookmark"></i>
-                            قائمة المراقبة
-                            <span id="watchlist-counter" class="watchlist-counter" style="display: none;">0</span>
-                        </button>
-                        <button class="header-btn" id="alertsBtn">
-                            <i class="fas fa-bell"></i>
-                            التنبيهات
-                        </button>
-                        <button class="header-btn" id="statisticsBtn">
-                            <i class="fas fa-chart-bar"></i>
-                            الإحصائيات
-                        </button>
-                        <button class="header-btn" id="exportBtn">
-                            <i class="fas fa-download"></i>
-                            تصدير البيانات
-                        </button>
-                    </div>
-                </div>
+        <header>
+            <h1>كاشف البامب للعملات الرقمية</h1>
+            <div class="controls">
+                <input type="text" id="searchInput" placeholder="البحث عن عملة...">
+                <button id="watchlist-btn">قائمة المراقبة</button>
+                <button id="refresh-btn">تحديث</button>
             </div>
         </header>
 
-        <div class="filters-section">
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-score="all">جميع العملات</button>
-                <button class="filter-btn" data-score="100">100 نقطة</button>
-                <button class="filter-btn" data-score="90">90+ نقطة</button>
-                <button class="filter-btn" data-score="80">80+ نقطة</button>
-                <button class="filter-btn" data-score="70">70+ نقطة</button>
-                <button class="filter-btn" data-score="60">60+ نقطة</button>
-            </div>
-                        
-            <div class="controls-section">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="البحث عن عملة..." />
-                    <i class="fas fa-search"></i>
-                </div>
-                                
-                <div class="sort-controls">
-                    <select id="sortSelect">
-                        <option value="score">ترتيب حسب النقاط</option>
-                        <option value="change">ترتيب حسب التغيير</option>
-                        <option value="volume">ترتيب حسب الحجم</option>
-                        <option value="price">ترتيب حسب السعر</option>
-                    </select>
-                </div>
-                                
-                <div class="refresh-section">
-                    <button id="refreshBtn" class="refresh-btn">
-                        <i class="fas fa-sync-alt"></i> تحديث البيانات
-                    </button>
-                    <span id="lastUpdate" class="last-update">آخر تحديث: --</span>
-                </div>
-            </div>
-        </div>
+        <!-- حاوية الإشعارات -->
+        <div id="notificationsContainer" class="notifications-container"></div>
 
-        <!-- شريط المعلومات السريعة -->
-        <div class="quick-info-bar">
-            <div class="info-item">
-                <span class="info-label">إجمالي العملات:</span>
-                <span id="totalCoins" class="info-value">0</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">عملات صاعدة:</span>
-                <span id="bullishCoins" class="info-value positive">0</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">عملات هابطة:</span>
-                <span id="bearishCoins" class="info-value negative">0</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">متوسط النقاط:</span>
-                <span id="averageScore" class="info-value">0</span>
-            </div>
-        </div>
-
-        <div class="loading" id="loading">
+        <!-- حاوية التحميل -->
+        <div id="loading" class="loading-container">
             <div class="spinner"></div>
             <p>جاري تحليل العملات...</p>
         </div>
 
-        <div class="coins-grid" id="coinsGrid">
-            <!-- البطاقات ستظهر هنا -->
+        <!-- الشاشة الرئيسية -->
+        <main id="main-container">
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">جميع العملات</button>
+                <button class="filter-btn" data-filter="100">100 نقطة</button>
+                <button class="filter-btn" data-filter="90">90+ نقطة</button>
+                <button class="filter-btn" data-filter="80">80+ نقطة</button>
+                <button class="filter-btn" data-filter="70">70+ نقطة</button>
+                <button class="filter-btn" data-filter="60">60+ نقطة</button>
+            </div>
+
+            <div class="sort-controls">
+                <select id="sort-select">
+                    <option value="score">ترتيب حسب النقاط</option>
+                    <option value="change">ترتيب حسب التغيير</option>
+                    <option value="volume">ترتيب حسب الحجم</option>
+                    <option value="price">ترتيب حسب السعر</option>
+                </select>
+            </div>
+
+            <!-- شبكة العملات -->
+            <div id="coinsGrid" class="coins-grid"></div>
+
+            <!-- رسالة عدم وجود نتائج -->
+            <div id="no-results" class="no-results" style="display: none;">
+                <h3>لا توجد نتائج</h3>
+                <p>لم يتم العثور على عملات تطابق معايير البحث</p>
+            </div>
+        </main>
+
+        <!-- قائمة المراقبة -->
+        <div id="watchlist-container" class="watchlist-container" style="display: none;">
+            <div class="watchlist-header">
+                <h2>قائمة المراقبة</h2>
+                <button id="back-btn">العودة للرئيسية</button>
+            </div>
+            <div id="watchlist-items" class="watchlist-items"></div>
         </div>
 
-        <!-- رسالة عدم وجود نتائج -->
-        <div class="no-results" id="noResults" style="display: none;">
-            <i class="fas fa-search"></i>
-            <h3>لا توجد نتائج</h3>
-            <p>لم يتم العثور على عملات تطابق معايير البحث</p>
-        </div>
+        <!-- رسائل الخطأ -->
+        <div id="error-message" class="error-message" style="display: none;"></div>
     </div>
 
-    <!-- النافذة المنبثقة للتفاصيل -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 id="modalTitle"></h2>
-                <button class="close-btn" id="closeModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-content" id="modalContent">
-                <!-- محتوى التحليل التفصيلي -->
-            </div>
-        </div>
-    </div>
-
-    <!-- منطقة الإشعارات -->
-    <div id="notificationsContainer" class="notifications-container"></div>
-
-    <!-- شريط التحكم السفلي -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-info">
-                <span>تم تحليل <span id="analyzedCount">0</span> عملة</span>
-                <span>آخر تحديث: <span id="footerLastUpdate">--</span></span>
-            </div>
-            <div class="footer-actions">
-                <button class="footer-btn" id="scrollTopBtn">
-                    <i class="fas fa-arrow-up"></i>
-                    العودة للأعلى
-                </button>
-                <button class="footer-btn" id="autoRefreshBtn">
-                    <i class="fas fa-clock"></i>
-                    <span id="autoRefreshText">تفعيل التحديث التلقائي</span>
-                </button>
-            </div>
-        </div>
-    </footer>
-
-    <!-- أزرار عائمة -->
-    <div class="floating-buttons">
-        <button class="floating-btn primary" id="floatingWatchlistBtn" title="قائمة المراقبة">
-            <i class="fas fa-bookmark"></i>
-            <span id="floating-watchlist-counter" class="floating-counter watchlist-counter">0</span>
-        </button>
-        <button class="floating-btn secondary" id="floatingAlertsBtn" title="التنبيهات">
-            <i class="fas fa-bell"></i>
-        </button>
-        <button class="floating-btn tertiary" id="floatingExportBtn" title="تصدير البيانات">
-            <i class="fas fa-download"></i>
-        </button>
-    </div>
-
-    <!-- مؤشر التقدم -->
-    <div class="progress-bar" id="progressBar">
-        <div class="progress-fill" id="progressFill"></div>
-    </div>
-
-    <!-- نافذة تأكيد -->
-    <div class="confirmation-modal" id="confirmationModal" style="display: none;">
-        <div class="confirmation-content">
-            <div class="confirmation-icon">
-                <i class="fas fa-question-circle"></i>
-            </div>
-            <h3 id="confirmationTitle">تأكيد العملية</h3>
-            <p id="confirmationMessage">هل أنت متأكد من هذه العملية؟</p>
-            <div class="confirmation-buttons">
-                <button class="btn-confirm" id="confirmBtn">تأكيد</button>
-                <button class="btn-cancel" id="cancelBtn">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- تحميل الملفات -->
-    <script src="config.js"></script>
     <script src="script.js"></script>
-    
- 
 </body>
 </html>
